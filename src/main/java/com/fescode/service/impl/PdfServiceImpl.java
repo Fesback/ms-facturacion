@@ -25,11 +25,11 @@ import static java.io.File.separator;
 @Service
 public class PdfServiceImpl implements PdfService {
 
-    private static final Font HEADER_FONT = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD, new BaseColor(50, 50, 50));
-    private static final Font TITLE_FONT = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(70, 130, 180));
-    private static final Font NORMAL_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
-    private static final Font BOLD_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
-    private static final Font TOTAL_FONT = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, new BaseColor(255, 69, 0));
+    private static final Font HEADER_FONT = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(50, 50, 50));
+    private static final Font TITLE_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, new BaseColor(70, 130, 180));
+    private static final Font NORMAL_FONT = new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL);
+    private static final Font BOLD_FONT = new Font(Font.FontFamily.HELVETICA, 9, Font.BOLD);
+    private static final Font TOTAL_FONT = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, new BaseColor(255, 69, 0));
 
 
     @Override
@@ -37,7 +37,7 @@ public class PdfServiceImpl implements PdfService {
         validarPedido(dto);
 
          try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document document = new Document(PageSize.A4, 40, 40, 60, 40);
+            Document document = new Document(PageSize.A4, 30, 30, 40, 30);
             PdfWriter writer = PdfWriter.getInstance(document, baos);
             writer.setPageEvent(new PdfPageEventHelper() {});
 
@@ -105,7 +105,7 @@ public class PdfServiceImpl implements PdfService {
 
         PdfPCell cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(8f);
+        cell.setPadding(4f);
 
         Paragraph customerInfo = new Paragraph();
         customerInfo.add(new Chunk("Cliente: ", BOLD_FONT));
@@ -114,8 +114,8 @@ public class PdfServiceImpl implements PdfService {
         customerInfo.add(new Chunk("Dirección: ", BOLD_FONT));
         customerInfo.add(new Chunk(dto.getDireccionEnvio(), NORMAL_FONT));
         customerInfo.add(Chunk.NEWLINE);
-        customerInfo.add(new Chunk("Teléfono: ", BOLD_FONT));
-        customerInfo.add(new Chunk(dto.getEmailCliente(), NORMAL_FONT)); // Aquí usamos email como contacto
+        customerInfo.add(new Chunk("Correo: ", BOLD_FONT));
+        customerInfo.add(new Chunk("" + dto.getEmailCliente(), NORMAL_FONT));
 
         cell.addElement(customerInfo);
         container.addCell(cell);
@@ -127,9 +127,12 @@ public class PdfServiceImpl implements PdfService {
     private void agregarItemsTable(Document document, List<PedidoPdfDTO.ItemPedidoDTO> items) throws DocumentException {
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{50f, 15f, 20f, 25f});
-        table.setSpacingBefore(15f);
-        table.setSpacingAfter(20f);
+        table.setWidths(new float[]{40f, 15f, 20f, 25f});
+        table.setSpacingBefore(8f);
+        table.setSpacingAfter(8f);
+        table.setHeaderRows(1);
+        table.setKeepTogether(true);
+        table.setSplitLate(false);
 
         BaseColor headerBgColor = new BaseColor(70, 130, 180);
         agregarCeldaEncabezado(table, "Artículo", headerBgColor, Element.ALIGN_LEFT);
@@ -213,7 +216,7 @@ public class PdfServiceImpl implements PdfService {
         PdfPCell cell = new PdfPCell(new Phrase(texto, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.WHITE)));
         cell.setBackgroundColor(bgColor);
         cell.setHorizontalAlignment(alineacion);
-        cell.setPadding(8);
+        cell.setPadding(4);
         cell.setBorderWidth(1f);
         cell.setBorderColor(bgColor);
         table.addCell(cell);
@@ -223,7 +226,7 @@ public class PdfServiceImpl implements PdfService {
         PdfPCell cell = new PdfPCell(new Phrase(texto, NORMAL_FONT));
         cell.setBackgroundColor(bgColor);
         cell.setHorizontalAlignment(alineacion);
-        cell.setPadding(6);
+        cell.setPadding(3);
         cell.setBorderWidth(0.5f);
         cell.setBorderColor(borderColor);
         table.addCell(cell);
